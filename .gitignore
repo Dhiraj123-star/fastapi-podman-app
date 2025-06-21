@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.db
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# Byte-compiled / cache
+*.pyc
+*.pyo
+*.pyd
+
+# macOS/Linux
+.DS_Store
+
+# Docker
+*.pid
+*.log
+*.sock
+.env.*
+docker-compose.override.yml
