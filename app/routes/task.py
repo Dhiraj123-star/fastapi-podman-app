@@ -1,3 +1,5 @@
+import json
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
@@ -9,6 +11,14 @@ router = APIRouter(
     tags=["Tasks"]
 )
 
+# Setup logger
+logger = logging.getLogger("task_logger")
+logging.basicConfig(level=logging.INFO)
+
+# Redis client
+redis_client = database.redis_client
+
+
 # Dependency to get DB session
 def get_db():
     db = database.SessionLocal()
@@ -19,17 +29,27 @@ def get_db():
 
 
 # -------------------- Get All Tasks --------------------
-
 @router.get("/", response_model=List[schemas.TaskResponse])
 def get_tasks(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    return db.query(models.Task).filter(models.Task.owner_id == current_user.id).all()
+    cache_key = f"user:{current_user.id}:tasks"
+    cached_tasks = redis_client.get(cache_key)
+
+    if cached_tasks:
+        logger.info("✅ Fetched tasks from Redis cache.")
+        return json.loads(cached_tasks)
+
+    tasks = db.query(models.Task).filter(models.Task.owner_id == current_user.id).all()
+    tasks_data = [schemas.TaskResponse.from_orm(task).dict() for task in tasks]
+    redis_client.set(cache_key, json.dumps(tasks_data), ex=300)  # Cache for 5 minutes
+
+    logger.info("💾 Fetched tasks from DB and cached in Redis.")
+    return tasks_data
 
 
 # -------------------- Create a Task --------------------
-
 @router.post("/", response_model=schemas.TaskResponse)
 def create_task(
     task_data: schemas.TaskCreate,
@@ -39,18 +59,22 @@ def create_task(
     new_task = models.Task(
         title=task_data.title,
         description=task_data.description,
-        completed=task_data.completed,  # ✅ included completed field
+        completed=task_data.completed,
         owner_id=current_user.id
     )
 
     db.add(new_task)
     db.commit()
     db.refresh(new_task)
+
+    # Invalidate cache
+    redis_client.delete(f"user:{current_user.id}:tasks")
+    logger.info("❌ Cache invalidated after task creation.")
+    
     return new_task
 
 
 # -------------------- Update a Task --------------------
-
 @router.put("/{task_id}", response_model=schemas.TaskResponse)
 def update_task(
     task_id: int,
@@ -71,11 +95,15 @@ def update_task(
 
     db.commit()
     db.refresh(task)
+
+    # Invalidate cache
+    redis_client.delete(f"user:{current_user.id}:tasks")
+    logger.info("❌ Cache invalidated after task update.")
+
     return task
 
 
 # -------------------- Delete a Task --------------------
-
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_task(
     task_id: int,
@@ -88,4 +116,9 @@ def delete_task(
     
     db.delete(task)
     db.commit()
+
+    # Invalidate cache
+    redis_client.delete(f"user:{current_user.id}:tasks")
+    logger.info("❌ Cache invalidated after task deletion.")
+
     return
