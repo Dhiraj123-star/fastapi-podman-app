@@ -24,3 +24,5 @@ __pycache__/
 *.sock
 .env.*
 docker-compose.override.yml
+
+fastapi-secrets.yaml

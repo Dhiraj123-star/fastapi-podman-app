@@ -1,4 +1,3 @@
-
 # 🚀 FastAPI + Podman App
 
 A professional-grade, containerized **FastAPI** application built with modern Python practices, leveraging **Podman** for secure, rootless development and orchestration.
@@ -31,6 +30,10 @@ A professional-grade, containerized **FastAPI** application built with modern Py
 - Modular and testable API structure
 - Uses **Podman** and `podman-compose` for rootless container orchestration
 - CI/CD ready: integrates with GitHub Actions and Docker Hub for image publishing
+- **Kubernetes-Ready**: Production-grade `Deployment` and `Service` files for **Minikube**
+  - FastAPI, PostgreSQL, and Redis deployed as independent services
+  - Environment variables managed via Kubernetes `Secrets` and `ConfigMaps`
+  - Resource limits defined for optimal scheduling and cluster health
 
 ---
 
@@ -42,6 +45,4 @@ This project demonstrates hands-on capabilities in:
 - Implementing efficient caching layers using Redis
 - Deploying containerized applications with modern, rootless tooling
 - Writing clean, production-ready Python backend services
-
-
-
+- **Running full-stack microservices locally using Minikube and Kubernetes**
