@@ -1,40 +1,47 @@
+
 # 🚀 FastAPI + Podman App
 
-A professional-grade, containerized **FastAPI** application leveraging **Podman** for secure, rootless development and deployment.
+A professional-grade, containerized **FastAPI** application built with modern Python practices, leveraging **Podman** for secure, rootless development and orchestration.
 
 ---
 
-## 🌟 Key Features
+## 🌟 Core Features
 
-- 🔐 **User Authentication with JWT**
-  - Secure user registration and login
-  - Token-based access to protected endpoints
+### 🔐 Secure User Authentication (JWT)
+- User registration and login with password hashing (`bcrypt`)
+- OAuth2-compliant access via JWT tokens
+- Protected endpoints for authenticated users
 
-- ✅ **Task Management System**
-  - Authenticated CRUD operations for managing personal tasks
-  - Supports creation, update (including status), and deletion
-  - Clean schema validation with Pydantic v2
+### ✅ Task Management System
+- Full CRUD support for managing personal tasks
+- Supports task title, description, and completion status
+- Ensures task ownership and user-level data separation
+- Clean schema validation using **Pydantic v2**
 
-- ⚡ **Redis Caching for Task Listing**
-  - Per-user task list is cached for high performance
-  - Cache auto-invalidates on task create/update/delete
-  - Built-in logging to trace whether data came from Redis or the database
+### ⚡ Redis-Based Caching
+- Per-user task listing is cached for performance
+- Automatic cache invalidation on task creation, update, or deletion
+- Logging to indicate whether data is served from cache or database
 
-- 🐍 Built with Python 3.11 and FastAPI
-- 📦 Containerized using **Podman** (rootless alternative to Docker)
-- 🧩 Orchestrated via `podman-compose`
-- 🧪 Easily testable with `curl` or Postman
+---
+
+## 🛠️ Technical Highlights
+
+- Built with **Python 3.11** and **FastAPI**
+- Modular and testable API structure
+- Uses **Podman** and `podman-compose` for rootless container orchestration
+- CI/CD ready: integrates with GitHub Actions and Docker Hub for image publishing
 
 ---
 
 ## 💼 Why This Project Matters
 
-This project demonstrates hands-on expertise in:
+This project demonstrates hands-on capabilities in:
 
-- Designing and building RESTful APIs using FastAPI
-- Implementing secure authentication and token-based access
-- Integrating caching strategies using Redis
-- Working with asynchronous, containerized environments using **Podman**
-- Writing production-ready Python code with modern tooling
+- Designing secure, token-based API systems
+- Implementing efficient caching layers using Redis
+- Deploying containerized applications with modern, rootless tooling
+- Writing clean, production-ready Python backend services
+
 
 
